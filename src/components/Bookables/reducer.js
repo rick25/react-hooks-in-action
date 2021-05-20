@@ -22,7 +22,7 @@ const reducer = (state, action) => {
       ).length;
       return {
         ...state,
-        hasDetails: (state.bookableIndex + 1) % count,
+        bookableIndex: (state.bookableIndex + 1) % count,
       };
     default:
       return state;

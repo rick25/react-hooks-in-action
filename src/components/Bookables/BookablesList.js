@@ -1,24 +1,52 @@
-import { Fragment, useState } from "react";
+import { Fragment, useReducer } from "react";
 import { bookables, sessions, days } from "../../static.json";
 import { FaArrowRight } from "react-icons/fa";
+import reducer from "./reducer";
 
+const initialState = {
+  group: "Salones",
+  bookableIndex: 0,
+  hasDetails: true,
+  bookables,
+};
 const BookablesList = () => {
-  const [group, setGroup] = useState("Accesorios");
-  const [bookableIndex, setBookableIndex] = useState(0);
-  const [hasDetails, setHasDetails] = useState(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { group, bookableIndex, bookables, hasDetails } = state;
 
   const groups = [...new Set(bookables.map((b) => b.group))];
   const bookablesInGroup = bookables.filter((b) => b.group === group);
   const bookable = bookablesInGroup[bookableIndex];
 
+  const changeGroup = (e) => {
+    dispatch({
+      type: "SET_GROUP",
+      payload: e.target.value,
+    });
+  };
+
+  const changeBookable = (selectedIndex) => {
+    dispatch({
+      type: "SET_BOOKABLE",
+      payload: selectedIndex,
+    });
+  };
+
   const nextBookable = () => {
-    setBookableIndex((i) => (i + 1) % bookablesInGroup.length);
+    dispatch({
+      type: "NEXT_BOOKABLE",
+    });
+  };
+
+  const toggleHasDetails = () => {
+    dispatch({
+      type: "TOGGLE_HAS_DETAILS",
+    });
   };
 
   return (
     <Fragment>
       <div>
-        <select value={group} onChange={(e) => setGroup(e.target.value)}>
+        <select value={group} onChange={changeGroup}>
           {groups.map((g) => (
             <option value={g} key={g}>
               {g}
@@ -28,7 +56,7 @@ const BookablesList = () => {
         <ul className="bookables items-list-nav">
           {bookablesInGroup.map((b, i) => (
             <li key={b.id} className={i === bookableIndex ? "selected" : null}>
-              <button className="btn" onClick={() => setBookableIndex(i)}>
+              <button className="btn" onClick={() => changeBookable(i)}>
                 {b.title}
               </button>
             </li>
@@ -51,7 +79,7 @@ const BookablesList = () => {
                   <input
                     type="checkbox"
                     checked={hasDetails}
-                    onChange={() => setHasDetails((has) => !has)}
+                    onChange={toggleHasDetails}
                   />
                   Mostrar Detalles
                 </label>
