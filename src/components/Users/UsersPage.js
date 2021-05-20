@@ -1,7 +1,9 @@
+import UserList from "./UserList";
+
 const UserPage = () => {
   return (
-    <main className="bookables-page">
-      <p>User Page!</p>
+    <main className="users-page">
+      <UserList />
     </main>
   );
 };
